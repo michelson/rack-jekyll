@@ -6,14 +6,15 @@ module Rack
   class Jekyll
     
     def initialize(opts = {})
-      if ::File.exist?(Dir.pwd + "/_config.yml")
-        @config = ::YAML.load(::File.read(Dir.pwd + "/_config.yml"))
+      config_file_path = opts[:config_file] || Dir.pwd + "/_config.yml"
+      if ::File.exist?(config_file_path)
+        @config = ::YAML.load(::File.read(config_file_path))
         @config = (@config.class == FalseClass ? {} : @config)
-        if @config["destination"].nil?
+        if @config[:destination].nil?
           @path = opts[:destination].nil? ? "_site" : opts[:destination]
         else
           opts.merge!(@config)
-          @path = @config["destination"].nil? ? "_site" : @config["destination"]
+          @path = @config[:destination].nil? ? "_site" : @config[:destination]
         end
       end
       @files = ::Dir[@path + "/**/*"].inspect
@@ -57,7 +58,7 @@ module Rack
         status, body, path_info = ::File.exist?(@path+"/404.html") ? [404,file_info(@path+"/404.html")[:body],"404.html"] : [404,"Not found","404.html"]
         mime = mime(path_info)
         if !@compiling
-          [status, {"Content-Type" => mime, "Content-length" => body.length.to_s}, [body]]
+          [status, {"Content-Type" => mime, "Content-Type" => body.length.to_s}, [body]]
         else
           [200, {"Content-Type" => "text/plain"}, ["This site is currently generating pages. Please reload this page after 10 secs."]]
         end
