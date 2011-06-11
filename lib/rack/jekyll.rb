@@ -6,15 +6,19 @@ module Rack
   class Jekyll
     
     def initialize(opts = {})
-      config_file_path = opts[:config_file] || Dir.pwd + "/_config.yml"
+      config_file_path = opts["config_file"] || Dir.pwd + "/_config.yml"
+      
+      #puts "RACK JACK #{config_file_path}"
+      
       if ::File.exist?(config_file_path)
         @config = ::YAML.load(::File.read(config_file_path))
         @config = (@config.class == FalseClass ? {} : @config)
-        if @config[:destination].nil?
-          @path = opts[:destination].nil? ? "_site" : opts[:destination]
+        puts @config
+        if @config["destination"].nil?
+          @path = opts["destination"].nil? ? "_site" : opts["destination"]
         else
           opts.merge!(@config)
-          @path = @config[:destination].nil? ? "_site" : @config[:destination]
+          @path = @config["destination"].nil? ? "_site" : @config["destination"]
         end
       end
       @files = ::Dir[@path + "/**/*"].inspect
@@ -24,6 +28,7 @@ module Rack
       if ::Dir[@path + "/**/*"].empty?
         begin
           require "jekyll"
+          #puts ::Jekyll.configuration(opts).to_yaml
           options = ::Jekyll.configuration(opts)
           site = ::Jekyll::Site.new(options)
           @compiling = true
