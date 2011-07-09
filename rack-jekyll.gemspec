@@ -1,4 +1,4 @@
-require "lib/rack/jekyll/version"
+require_relative "lib/rack/jekyll/version"
 
 Gem::Specification.new do |s|
  s.required_rubygems_version = ">= 1.3.6"
